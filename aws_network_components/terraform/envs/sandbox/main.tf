@@ -23,3 +23,12 @@ module "shared_services_vpc" {
   private_subnet_cidrs  = ["10.0.2.0/24", "10.0.3.0/24"]
   isolated_subnet_cidrs = ["10.0.4.0/24", "10.0.5.0/24"]
 }
+
+module "shared_services_security" {
+  source = "../../modules/security"
+
+  name               = "shared-services"
+  vpc_id             = module.shared_services_vpc.vpc_id
+  vpc_cidr           = "10.0.0.0/16"
+  private_subnet_ids = module.shared_services_vpc.private_subnet_ids
+}
