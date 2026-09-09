@@ -174,3 +174,32 @@ resource "aws_flow_log" "this" {
   vpc_id               = var.vpc_id
   tags                 = { Name = "${var.name}-flow-log" }
 }
+
+resource "aws_security_group" "resolver" {
+  name        = "${var.name}-resolver-sg"
+  description = "Route 53 Resolver endpoints"
+  vpc_id      = var.vpc_id
+  tags        = { Name = "${var.name}-resolver-sg" }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "resolver_dns_tcp" {
+  security_group_id = aws_security_group.resolver.id
+  cidr_ipv4         = "10.0.0.0/8"
+  from_port         = 53
+  to_port           = 53
+  ip_protocol       = "tcp"
+}
+
+resource "aws_vpc_security_group_ingress_rule" "resolver_dns_udp" {
+  security_group_id = aws_security_group.resolver.id
+  cidr_ipv4         = "10.0.0.0/8"
+  from_port         = 53
+  to_port           = 53
+  ip_protocol       = "udp"
+}
+
+resource "aws_vpc_security_group_egress_rule" "resolver_all" {
+  security_group_id = aws_security_group.resolver.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1"
+}
