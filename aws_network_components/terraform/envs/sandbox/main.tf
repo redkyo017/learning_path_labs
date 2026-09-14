@@ -73,3 +73,27 @@ module "shared_services_dns" {
 }
 
 # Day 4 adds module "app_vpc" and module "ec2_test_app" (see plan Step H3).
+module "app_vpc" {
+  source = "../../modules/vpc"
+
+  name                  = "app"
+  cidr_block            = "10.1.0.0/16"
+  azs                   = ["${var.region}a", "${var.region}b"]
+  public_subnet_cidrs   = ["10.1.0.0/24", "10.1.1.0/24"]
+  private_subnet_cidrs  = ["10.1.2.0/24", "10.1.3.0/24"]
+  isolated_subnet_cidrs = ["10.1.4.0/24", "10.1.5.0/24"]
+}
+
+module "tgw" {
+  source = "../../modules/tgw"
+
+  name = "platform"
+
+  shared_services_vpc_id                  = module.shared_services_vpc.vpc_id
+  shared_services_private_subnet_ids      = module.shared_services_vpc.private_subnet_ids
+  shared_services_private_route_table_ids = module.shared_services_vpc.private_route_table_ids
+
+  app_vpc_id                  = module.app_vpc.vpc_id
+  app_private_subnet_ids      = module.app_vpc.private_subnet_ids
+  app_private_route_table_ids = module.app_vpc.private_route_table_ids
+}
