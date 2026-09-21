@@ -17,3 +17,7 @@ output "flow_log_group_name" {
 output "resolver_sg_id" {
   value = aws_security_group.resolver.id
 }
+
+output "endpoint_sg_id" {
+  value = aws_security_group.endpoints.id
+}

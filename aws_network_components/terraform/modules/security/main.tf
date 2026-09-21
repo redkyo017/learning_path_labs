@@ -203,3 +203,24 @@ resource "aws_vpc_security_group_egress_rule" "resolver_all" {
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
 }
+
+resource "aws_security_group" "endpoints" {
+  name        = "${var.name}-endpoints-sg"
+  description = "VPC interface endpoints - allow 443 from VPC"
+  vpc_id      = var.vpc_id
+  tags        = { Name = "${var.name}-endpoints-sg" }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "endpoints_https" {
+  security_group_id = aws_security_group.endpoints.id
+  cidr_ipv4         = var.vpc_cidr
+  from_port         = 443
+  to_port           = 443
+  ip_protocol       = "tcp"
+}
+
+resource "aws_vpc_security_group_egress_rule" "endpoints_all" {
+  security_group_id = aws_security_group.endpoints.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1"
+}

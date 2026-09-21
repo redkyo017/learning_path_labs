@@ -65,6 +65,7 @@ variable "enable_ec2_test" {
 # ---------------------------------------------------------------------------
 # Values that must be supplied by hand for resources this config cannot create
 # ---------------------------------------------------------------------------
+# day 5 variables
 
 variable "privatelink_nlb_arn" {
   type        = string

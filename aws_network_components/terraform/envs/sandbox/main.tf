@@ -97,3 +97,19 @@ module "tgw" {
   app_private_subnet_ids      = module.app_vpc.private_subnet_ids
   app_private_route_table_ids = module.app_vpc.private_route_table_ids
 }
+
+# Day 5 VPC Endpoints Service practice
+module "shared_services_endpoints" {
+  count  = var.enable_endpoints ? 1 : 0
+  source = "../../modules/endpoints"
+
+  name                    = "shared-services"
+  vpc_id                  = module.shared_services_vpc.vpc_id
+  region                  = var.region
+  private_subnet_ids      = module.shared_services_vpc.private_subnet_ids
+  private_route_table_ids = module.shared_services_vpc.private_route_table_ids
+  isolated_route_table_id = module.shared_services_vpc.isolated_route_table_id
+  endpoint_sg_id          = one(module.shared_services_security[*].endpoint_sg_id)
+  nlb_arn                 = var.privatelink_nlb_arn
+  allowed_principal_arns  = var.allowed_principal_arns
+}
